@@ -5,16 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"
+      rel="stylesheet"
+    />
     <style>
       * {
         margin: 0;
         padding: 0;
-        
-        font-family: "微軟正黑體";
-        background: url(./123.jpg) no-repeat center ;
-        overflow: hidden;
 
+        font-family: "Michroma", sans-serif;
+        background: url(./123.jpg) no-repeat center;
+        overflow: hidden;
       }
       table {
         width: 500px;
@@ -23,7 +25,7 @@
         line-height: 32px;
         font-size: 32px;
         background: #474e64;
-        
+
         position: absolute;
         top: 50%;
         left: 50%;
@@ -31,16 +33,26 @@
         font-weight: 100;
         color: black;
       }
-      table #text{
-        background: #EEB687;
+      #result {
+        width: 500px;
+        height: 100px;
+        position: absolute;
+        top: 0;
+        left: 40%;
+        font-size: 16px;
+        text-align: right;
+        color: black;
+        border-bottom: 0;
+      }
+      table #text {
+        background: #eeb687;
         text-align: right;
         font-size: 48px;
         height: 150px;
-        font-family: 'Michroma', sans-serif;
+        font-family: "Michroma", sans-serif;
       }
       table td {
         width: 115px;
-        
       }
       table .num {
         color: white;
@@ -58,9 +70,11 @@
     </style>
   </head>
   <body>
+    <div id="result"></div>
     <table>
+      <tr></tr>
       <tr>
-        <td colspan="4" id="text">0</td>
+        <td colspan="4" id="text">69</td>
       </tr>
 
       <tr>
@@ -94,36 +108,95 @@
     </table>
     <script>
       const text = document.getElementById("text");
+      const result = document.getElementById("result");
       const btns = document.querySelectorAll("td:not(#text)");
 
+      let reset = false;
       for (const btn of btns) {
         btn.onclick = () => {
+          btn.style.backgroundColor = "rgba(100, 100, 100, 0.1)";
+          setTimeout(() => {
+            btn.style.backgroundColor = "";
+          }, 120);
+
           const btnText = btn.innerText;
           if (btnText === "=") {
+            result.innerText = text.innerText + `=`;
             text.innerText = eval(text.innerText);
-          } else if (btnText === "C") {
+            reset = true;
+          } else if (btnText === "C" || btnText === 0) {
+            result.innerText = " ";
             text.innerText = "0";
           } else {
-            if (text.innerText !== "0") {
+            if (text.innerText === "-" && isNaN(parseInt(btnText))) return;
+
+            if (text.innerText !== "0" && !reset) {
               text.innerText += btnText;
-            } else if (!["+", "*", "/"].includes(btnText)) {
+            } else if (!["+", "*", "/"].includes(btnText) || reset) {
+              result.innerText += text.innerText;
               text.innerText = btnText;
+              reset = false;
             }
           }
         };
       }
-      document.onkeydown = () => {
+
+      document.onkeydown = (event) => {
         const btnText = event.key;
 
-        if (btnText === "=" || btnText === "Enter") {
+        if (btnText === "Enter" || btnText === "=") {
+          result.innerText = text.innerText + `=`;
           text.innerText = eval(text.innerText);
-        } else if (btnText === "C"|| btnText === "Delete") {
+          reset = true;
+        } else if (btnText === "c" || btnText === "C") {
           text.innerText = "0";
+          result.innerText = " ";
         } else {
           if (text.innerText === "-" && isNaN(parseInt(btnText))) return;
-          if (text.innerText !== "0") {
+
+          if (
+            text.innerText !== "0" &&
+            [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "Enter",
+              "+",
+              "-",
+              "*",
+              "/",
+              ".",
+            ].includes(btnText) &&
+            !reset
+          ) {
             text.innerText += btnText;
-          } else if (!["+", "*", "/"].includes(btnText)) {
+          } else if (
+            (!["+", "*", "/"].includes(btnText) &&
+              [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "Enter",
+                "+",
+                "-",
+                "*",
+                "/",
+                ".",
+              ].includes(btnText)) ||
+            reset
+          ) {
             text.innerText = btnText;
           }
         }
